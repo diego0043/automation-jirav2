@@ -1,0 +1,6 @@
+#ignorar archivo de credenciales scripts\private_credentials.py
+scripts/private_credentials
+
+#ignorar carpeta pycache
+__pycache__/
+scripts/private_credentials.py
