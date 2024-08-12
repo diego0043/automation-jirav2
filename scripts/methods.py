@@ -1,5 +1,5 @@
 from config_selenium import *
-from scripts.private_credentials import *
+from private_credentials import *
 
 def login_jira():
     driver.get("https://siman.atlassian.net/jira/software/c/projects/CSC/boards/115/backlog");
