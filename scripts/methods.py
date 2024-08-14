@@ -1,26 +1,69 @@
-from config_selenium import *
+from config import *
 from private_credentials import *
 
-def login_jira():
-    driver.get("https://siman.atlassian.net/jira/software/c/projects/CSC/boards/115/backlog");
+def create_task_backlog(name_task, priority, type, num_subtask = 0):
+    try:
+    # Datos del issue a crear
+        issue_data = {
+            "fields": {
+                "project": {
+                    "key": "CSC"  # Reemplaza con la clave del proyecto
+                },
+                "summary": name_task,  # Título del issue
+                "description": "Descripción detallada de la tarea",
+                "issuetype": {
+                    "name": type  # Cambia esto a "Bug", "Story", etc. si es necesario
+                },
+                "priority": {
+                    "name": priority  # Configura la prioridad (High, Medium, Low, etc.)
+                },
+            }
+        }
 
-    time.sleep(2)
+        # Solicitud para crear el issue
+        response = requests.post(api_endpoint, 
+                                headers={"Content-Type": "application/json"}, 
+                                auth=auth, 
+                                data=json.dumps(issue_data))
 
-    btn_login = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "microsoft-auth-button")))
-    btn_login.click()
+        # Comprobar si la creación fue exitosa
+        if response.status_code == 201:
+            issue_key = response.json()["key"]
 
+            # Crear subtareas
+            if num_subtask > 0:
 
-    input_email = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "i0116")))
-    input_email.send_keys(email)
+                template_subtask = "DEV - " +str(name_task) if type == "Task" else "QA - Ejecución de pruebas - "+str(name_task)
+                for k in range(num_subtask):
+                    subtask_data = {
+                        "fields": {
+                            "project": {
+                                "key": "CSC"
+                            },
+                            "summary": template_subtask,
+                            "parent": {
+                                "key": issue_key
+                            },
+                            "issuetype": {
+                                "name": "Sub-task"
+                            },
+                            "priority": {
+                                "name": priority  # Configura la prioridad (High, Medium, Low, etc.)
+                            },
+                        }
+                    }
 
-    btn_next = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "idSIButton9")))
-    btn_next.click()
+                    response = requests.post(api_endpoint, 
+                                            headers={"Content-Type": "application/json"}, 
+                                            auth=auth, 
+                                            data=json.dumps(subtask_data))
 
-    input_password = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "i0118")))
-    input_password.send_keys(password)
+                    if response.status_code != 201:
+                        print(f"Algo salió mal creando la subtarea {k+1}: {response.status_code} {response.text}")
 
-    btn_sign_in = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "idSIButton9")))
-    btn_sign_in.click()
-
-    btn_sign_in = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "idSIButton9")))
-    btn_sign_in.click()
+            print(f"Issue creado correctamente: {issue_key}")
+        else:
+            print(f"Error creando el issue: {response.status_code} {response.text}")
+    
+    except Exception as e:
+        print(f"Error creando el issue: {e}")
