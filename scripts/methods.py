@@ -67,3 +67,38 @@ def create_task_backlog(name_task, priority, type, num_subtask = 0):
     
     except Exception as e:
         print(f"Error creando el issue: {e}")
+
+def create_subTask(parent, name_task, priority, type, num_subtask=1):
+    try:
+        for k in range(num_subtask):
+
+            template_subtask = "DEV - " +str(name_task) if type == "Task" else "QA - Ejecución de pruebas - "+str(name_task)
+
+            subtask_data = {
+                "fields": {
+                    "project": {
+                        "key": "CSC"
+                    },
+                    "summary": template_subtask,
+                    "parent": {
+                        "key": parent
+                    },
+                    "issuetype": {
+                        "name": "Sub-task"
+                    },
+                    "priority": {
+                        "name": priority  # Configura la prioridad (High, Medium, Low, etc.)
+                    },
+                }
+            }
+
+            response = requests.post(api_endpoint, 
+                                            headers={"Content-Type": "application/json"}, 
+                                            auth=auth, 
+                                            data=json.dumps(subtask_data))
+
+            if response.status_code != 201:
+                print(f"Error creando la subtarea {k+1}")
+        print(f"Subtarea(s) creada(s) correctamente para {parent}")
+    except Exception as e:
+        print(f"Error creando la subtarea: {e}")
