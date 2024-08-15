@@ -1,7 +1,7 @@
 Lo primero que se debe realizar es crear un API KEY de Jira en la siguiente página: 
 https://id.atlassian.com/manage/api-tokens
 
-Una vez creado el API KEY, se debe crear un archivo .env en la raíz del proyecto con la siguiente estructura:
+Una vez creado el API KEY, se debe crear un archivo .env en la carpeta scripts del proyecto con la siguiente estructura:
 - Nombre del archivo: private_credentials.py
 
 - Dentro de este agregar las siguientes variables:
