@@ -7,7 +7,7 @@ def create_task_backlog(name_task, priority, type, num_subtask = 0):
         issue_data = {
             "fields": {
                 "project": {
-                    "key": "CSC"  # Reemplaza con la clave del proyecto
+                    "key": project_key  # Reemplaza con la clave del proyecto
                 },
                 "summary": name_task,  # Título del issue
                 "description": "Descripción detallada de la tarea",
@@ -33,12 +33,12 @@ def create_task_backlog(name_task, priority, type, num_subtask = 0):
             # Crear subtareas
             if num_subtask > 0:
 
-                template_subtask = "DEV - " +str(name_task) if type == "Task" else "QA - Ejecución de pruebas - "+str(name_task)
+                template_subtask = "QA - Ejecución de pruebas - "+str(name_task)
                 for k in range(num_subtask):
                     subtask_data = {
                         "fields": {
                             "project": {
-                                "key": "CSC"
+                                "key": project_key
                             },
                             "summary": template_subtask,
                             "parent": {
@@ -72,12 +72,12 @@ def create_subTask(parent, name_task, priority, type, num_subtask=1):
     try:
         for k in range(num_subtask):
 
-            template_subtask = "DEV - " +str(name_task) if type == "Task" else "QA - Ejecución de pruebas - "+str(name_task)
+            template_subtask = "QA - Ejecución de pruebas - "+str(name_task)
 
             subtask_data = {
                 "fields": {
                     "project": {
-                        "key": "CSC"
+                        "key": project_key
                     },
                     "summary": template_subtask,
                     "parent": {
